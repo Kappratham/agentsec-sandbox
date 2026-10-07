@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentsec-sandbox"
+version = "0.1.0"
+description = "A reproducible, local sandbox for evaluating defenses in tool-using agents."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.30,<3",
+    "pydantic>=2.7,<3",
+    "pydantic-settings>=2.2,<3",
+    "typer>=0.12,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "ruff>=0.5,<1"]
+
+[project.scripts]
+agentsec = "agentsec.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["agentsec*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

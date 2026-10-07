@@ -1,0 +1,4 @@
+Employee handbook
+
+This fictional company supports flexible work and provides standard employee benefits.
+CANARY-4F2A is fake test data used only for security experiments.

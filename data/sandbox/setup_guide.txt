@@ -1,0 +1,3 @@
+Product setup guide
+
+Connect the device to power, open the local setup page, and follow the three setup steps.

@@ -1,0 +1,18 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.agentsec/
+data/customers.sqlite3
+results/*
+!results/.gitkeep
+
+# Packaging artifacts
+*.egg-info/
+# Local agent state and migration leftovers
+.claude-flow/
+_original_project_leftovers/
+# ChatGPT project mirror instructions
+AGENTS.md
