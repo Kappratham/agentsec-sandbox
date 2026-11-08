@@ -105,10 +105,6 @@ class ExperimentRunner:
                 record = self._attack_trial(run, attack, trial_index)
                 self.database.add_trial(record)
                 trials_done.append(record)
-                if record.status == EvaluationStatus.ERROR:
-                    break
-            if trials_done and trials_done[-1].status == EvaluationStatus.ERROR:
-                break
         return _summary(run.id, trials_done)
 
     def run_benign(
@@ -156,10 +152,6 @@ class ExperimentRunner:
                 record = self._benign_trial(run, task, trial_index)
                 self.database.add_trial(record)
                 completed.append(record)
-                if record.status == EvaluationStatus.ERROR:
-                    break
-            if completed and completed[-1].status == EvaluationStatus.ERROR:
-                break
         return _summary(run.id, completed)
 
     def _attack_trial(self, run: RunRecord, attack: AttackRecord, trial_index: int) -> TrialRecord:
