@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from agentsec.agent.tasks import AgentTask
 from agentsec.agent.trace import AgentTrace
 from agentsec.defenses.config import normalize_defenses
+from agentsec.defenses.gate import GateDecision, GatePolicy, GateResult, LLMGate
 from agentsec.defenses.policies import (
     quote_untrusted_content,
     spotlight_untrusted_content,
@@ -65,6 +66,12 @@ class ReActAgent:
         if "D0" in defense_ids:
             defense_ids.clear()
         trace = AgentTrace(task_id=task.id, model=getattr(self.backend, "model", "unknown"))
+
+        # Initialize D7 LLM Gate if enabled
+        llm_gate: LLMGate | None = None
+        if "D7" in defense_ids:
+            gate_policy = GatePolicy()
+            llm_gate = LLMGate(self.backend, gate_policy)
         system_prompt = (
             "You are a customer support assistant. "
             "Use the provided tools to answer the user's request."
@@ -207,6 +214,45 @@ class ReActAgent:
                         }
                         tool_text = f"Blocked by {layer}: {reason}"
                         raise _BlockedToolCall(result, tool_text)
+
+                    # D7: LLM Gate evaluation before tool execution
+                    if "D7" in defense_ids and llm_gate is not None:
+                        gate_result: GateResult = llm_gate.evaluate(
+                            call_id=call.id,
+                            tool_name=call.name,
+                            arguments=call.arguments,
+                            user_request=task.goal,
+                            trace=trace,
+                        )
+                        trace.add_event(
+                            "llm_gate",
+                            {
+                                "call_id": call.id,
+                                "tool": call.name,
+                                "decision": gate_result.decision.value,
+                                "confidence": gate_result.confidence,
+                                "reasoning": gate_result.reasoning,
+                                "risk_factors": [r.value for r in gate_result.risk_factors],
+                            },
+                        )
+                        if gate_result.decision == GateDecision.BLOCK:
+                            trace.add_event(
+                                "defense_block",
+                                {
+                                    "call_id": call.id,
+                                    "tool": call.name,
+                                    "layer": "D7",
+                                    "reason": gate_result.reasoning,
+                                },
+                            )
+                            result = {
+                                "error": f"Blocked by D7 (LLM Gate): {gate_result.reasoning}",
+                                "provenance": "defense_block",
+                                "blocked_by_defense": "D7",
+                            }
+                            tool_text = f"Blocked by D7: {gate_result.reasoning}"
+                            raise _BlockedToolCall(result, tool_text)
+
                     tool_result = tool(**call.arguments)
                     result = tool_result.model_dump(mode="json")
                     tool_text = tool_result.content

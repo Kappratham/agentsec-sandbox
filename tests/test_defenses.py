@@ -135,5 +135,6 @@ def test_defense_stack_validation() -> None:
     assert normalize_defenses(["d1", "D4", "D1"]) == ["D1", "D4"]
     with pytest.raises(ValueError, match="cannot be combined"):
         normalize_defenses(["D0", "D2"])
-    with pytest.raises(ValueError, match="unknown defense"):
-        normalize_defenses(["D7"])
+    # D7 is now a valid defense
+    assert normalize_defenses(["D7"]) == ["D7"]
+    assert normalize_defenses(["D1", "D7"]) == ["D1", "D7"]

@@ -13,6 +13,7 @@ class DefenseID(StrEnum):
     EGRESS_VALIDATION = "D4"
     CONTEXT_ISOLATION = "D5"
     HUMAN_CONFIRMATION = "D6"
+    LLM_GATE = "D7"
 
 
 def normalize_defenses(defenses: list[str] | None) -> list[str]:

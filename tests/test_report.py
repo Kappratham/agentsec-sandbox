@@ -19,10 +19,11 @@ def test_wilson_interval_handles_empty_and_small_samples() -> None:
 
 def test_ablation_plan_has_baseline_singles_and_cumulative_stacks() -> None:
     stacks = ablation_stacks()
-    assert len(stacks) == 12
+    # D0 + 7 singles (D1-D7) + 6 cumulative (D1-D2, D1-D3, ..., D1-D7) = 14
+    assert len(stacks) == 14
     assert stacks[0] == ["D0"]
-    assert stacks[1:7] == [[f"D{i}"] for i in range(1, 7)]
-    assert stacks[-1] == [f"D{i}" for i in range(1, 7)]
+    assert stacks[1:8] == [[f"D{i}"] for i in range(1, 8)]
+    assert stacks[-1] == [f"D{i}" for i in range(1, 8)]
 
 
 def test_report_uses_saved_trials_and_writes_svg(tmp_path: Path) -> None:

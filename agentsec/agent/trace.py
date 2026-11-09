@@ -20,6 +20,7 @@ class TraceEvent(BaseModel):
         "attack_injection",
         "defense_block",
         "context_isolation",
+        "llm_gate",
     ]
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     elapsed_ms: float = 0.0
@@ -46,6 +47,7 @@ class AgentTrace(BaseModel):
             "attack_injection",
             "defense_block",
             "context_isolation",
+            "llm_gate",
         ],
         data: dict[str, Any],
         elapsed_ms: float = 0.0,
