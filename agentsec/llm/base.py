@@ -8,7 +8,7 @@ import sqlite3
 import time
 from typing import Protocol
 
-from openai import OpenAI, RateLimitError
+from openai import OpenAI, RateLimitError, APITimeoutError
 
 from agentsec.llm.models import LLMRequest, LLMResponse, ToolCall
 from agentsec.settings import Settings
@@ -83,7 +83,7 @@ class OpenAICompatibleBackend:
                     prompt_tokens=raw.usage.prompt_tokens if raw.usage else 0,
                     completion_tokens=raw.usage.completion_tokens if raw.usage else 0,
                 )
-            except RateLimitError:
+            except (RateLimitError, APITimeoutError):
                 if attempt >= retries:
                     raise
                 time.sleep(min(2**attempt, 30))

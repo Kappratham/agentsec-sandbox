@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     ollama_model: str = Field(default="llama3.1:8b", alias="OLLAMA_MODEL")
     llm_backend: Literal["groq", "ollama"] = Field(default="groq", alias="LLM_BACKEND")
     llm_temperature: float = Field(default=0.0, ge=0.0, le=2.0, alias="LLM_TEMPERATURE")
-    llm_timeout_seconds: float = Field(default=60.0, gt=0, alias="LLM_TIMEOUT_SECONDS")
+    llm_timeout_seconds: float = Field(default=120.0, gt=0, alias="LLM_TIMEOUT_SECONDS")
     llm_rate_limit_retries: int = Field(default=4, ge=0, le=10, alias="LLM_RATE_LIMIT_RETRIES")
     llm_cache_enabled: bool = Field(default=True, alias="LLM_CACHE_ENABLED")
     llm_cache_path: Path = Field(
